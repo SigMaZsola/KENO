@@ -62,7 +62,7 @@ namespace Kenó
 
         private void lbHuzasok_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ErdemesSzámolni();
+            ErdemesSzamolni();
         }
 
         private void FeltoltSzamGrid()
@@ -120,7 +120,7 @@ namespace Kenó
                 tbOsszeg.IsReadOnly = true;  // már nem írható :contentReference[oaicite:2]{index=2}
             }
 
-            ErdemesSzámolni();
+            ErdemesSzamolni();
         }
 
         private void FrissitLabel()
@@ -135,16 +135,23 @@ namespace Kenó
 
         private void tbOsszeg_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ErdemesSzámolni();
+            ErdemesSzamolni();
         }
 
-        private void ErdemesSzámolni()
+        private void ErdemesSzamolni()
         {
-            if (!int.TryParse(tbOsszeg.Text, out int tet)
-                || tet < 200 || tet > 1000)
+            if (!int.TryParse(tbOsszeg.Text, out int tet))
             {
                 lNyeremeny.Foreground = Brushes.Red;
-                lNyeremeny.Content = "Tétnek 200–1000 közé kell esnie!";
+                lNyeremeny.Content = "Adj meg egy érvényes számot!";
+                return;
+            }
+
+            int[] engedelyezettTetek = { 100, 200, 400, 600, 800, 1000 };
+            if (!engedelyezettTetek.Contains(tet))
+            {
+                lNyeremeny.Foreground = Brushes.Red;
+                lNyeremeny.Content = "A tét csak 100, 200, 400, 600, 800 vagy 1000 lehet!";
                 return;
             }
 
@@ -169,45 +176,41 @@ namespace Kenó
         {
             int tet = int.Parse(tbOsszeg.Text);
             var huzott = huzasok[index].huzottSzamok;
+            int talalatok = tippek.Count(tipp => huzott.Contains(tipp));
 
-            int talalatok = 0;
-            foreach (int tipp in tippek)
-            {
-                if (huzott.Contains(tipp))
-                    talalatok++;
-            }
+            Dictionary<string, int> nyeroParok = new Dictionary<string, int>()
+    {
+        {"10-10",1000000}, {"10-9",8000}, {"10-8",350},
+        {"9-9",100000}, {"9-8",1200}, {"9-7",100},
+        {"8-8",20000}, {"8-7",350}, {"8-6",25},
+        {"7-7",5000}, {"7-6",60}, {"7-5",6},
+        {"6-6",500}, {"6-5",20},
+        {"5-5",200}, {"5-4",10}, {"5-3",2},
+        {"4-4",100}, {"4-3",2},
+        {"3-3",15}, {"3-2",1},
+        {"2-2",6},
+        {"1-1",2}
+    };
 
             string kulcs = $"{tippek.Count}-{talalatok}";
-            Dictionary<string, int> nyeroParok = new Dictionary<string, int>() {
-                {"10-10",1000000}, {"10-9",8000}, {"10-8",350},
-                {"9-9",100000}, {"9-8",1200}, {"9-7",100},
-                {"8-8",20000}, {"8-7",350}, {"8-6",25},
-                {"7-7",5000}, {"7-6",60}, {"7-5",6},
-                {"6-6",500}, {"6-5",20},
-                {"5-5",200}, {"5-4",10}, {"5-3",2},
-                {"4-4",100}, {"4-3",2},
-                {"3-3",15}, {"3-2",1},
-                {"2-2",6},
-                {"1-1",2}
-            };
             int szorz = nyeroParok.ContainsKey(kulcs) ? nyeroParok[kulcs] : 0;
             int nyeremeny = tet * szorz;
 
             if (szorz == 0)
             {
                 lNyeremeny.Foreground = Brushes.Red;
-                lNyeremeny.Content = $"Találatok: {talalatok}   – Sajnos nem nyertél!";
+                lNyeremeny.Content = $"Találatok: {talalatok} – Sajnos nem nyertél!";
             }
             else
             {
                 lNyeremeny.Foreground = Brushes.Green;
-                lNyeremeny.Content =
-                    $"Találatok: {talalatok}   Szorzó: {szorz}x  |  Nyeremény: {nyeremeny:N0} Ft";
+                lNyeremeny.Content = $"Találatok: {talalatok}   Szorzó: {szorz}x  |  Nyeremény: {nyeremeny:N0} Ft";
             }
+        }
 
-            lNyeremeny.Foreground = Brushes.Red;
-            lNyeremeny.Content =
-                $"Találatok: {talalatok}   Szorzó: {szorz}x  |  Nyeremény: {nyeremeny:N0} Ft";
+        private void btnKiszamol_Click(object sender, RoutedEventArgs e)
+        {
+            ErdemesSzamolni();
         }
     }
-}
+    }

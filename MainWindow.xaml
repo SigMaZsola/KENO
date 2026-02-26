@@ -66,8 +66,11 @@
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Label x:Name="lTippCointainer"  Grid.Row="0" >Tppek:</Label>
+            <Button x:Name="btnKiszamol"  Grid.Row="1" Click="btnKiszamol_Click" >Kiszámol</Button>
+
         </Grid>
 
         <Grid Grid.Row="1" Grid.Column="1">

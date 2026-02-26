@@ -80,7 +80,7 @@ namespace Kenó
         }
         public bool Helyes()
         {
-            return (huzottSzamok.Count() != 20 || huzottSzamok.Distinct().Count() != 20);
+            return huzottSzamok.Count() == 20 && huzottSzamok.Distinct().Count() == 20;
 
                 
         }
